@@ -49,7 +49,7 @@ class FilmControllerTest {
     @Test
     @DisplayName("Создание фильма")
     void create() {
-        final Film createdFilm = filmController.create(film);
+        final Film createdFilm = filmController.create(film).getBody();
         final long id = createdFilm.getId();
 
         assertEquals(createdFilm, filmController.getFilms().get(id), "Фильмы не совпадают.");
@@ -109,7 +109,7 @@ class FilmControllerTest {
                 .releaseDate(LocalDate.of(2000, 5, 25))
                 .build();
 
-        filmController.create(film);
-        assertEquals(updateFilm, filmController.update(updateFilm), "Фильмы разные");
+        filmController.create(film).getBody();
+        assertEquals(updateFilm, filmController.update(updateFilm).getBody(), "Фильмы разные");
     }
 }

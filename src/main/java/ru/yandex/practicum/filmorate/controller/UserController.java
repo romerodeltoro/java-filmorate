@@ -30,25 +30,24 @@ public class UserController {
     }
 
     @GetMapping
-    public Collection<User> findAll(HttpServletRequest request) {
+    public ResponseEntity<Collection<User>> findAll(HttpServletRequest request) {
         log.info("Получен запрос к эндпоинту: '{} {}', Строка параметров запроса: '{}'",
                 request.getMethod(), request.getRequestURI(), request.getQueryString());
-        return users.values();
+        return ResponseEntity.ok().body(users.values());
     }
 
     @PostMapping
-    public User create(@Valid @RequestBody User user) {
+    public ResponseEntity<User> create(@Valid @RequestBody User user) {
         ResponseEntity.ok(userService.checkLoginToHaveNoSpaces(user.getLogin()));
         ResponseEntity.ok(userService.checkNameToBlank(user));
         user.setId(setIncrementedUserId());
         users.put(user.getId(), user);
         log.info("Добавлен новый юзер: '{}'", user);
-        return user;
-
+        return ResponseEntity.ok().body(user);
     }
 
     @PutMapping
-    public User update(@Valid @RequestBody User user) {
+    public ResponseEntity<User> update(@Valid @RequestBody User user) {
         if (users.values().stream().anyMatch(f -> f.getName().equals(user.getName()))) {
             User updateUser = (User) users.values().stream().filter(f -> f.getName().equals(user.getName()));
             users.put(updateUser.getId(), user);
@@ -57,7 +56,7 @@ public class UserController {
             users.put(user.getId(), user);
             log.info("User '{}' - обновлен", user);
         }
-        return user;
+        return ResponseEntity.ok().body(user);
     }
 
 }

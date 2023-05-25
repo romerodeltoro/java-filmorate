@@ -53,7 +53,7 @@ class UserControllerTest {
     @Test
     @DisplayName("Создание юзера")
     void create() {
-        final User createdUser = userController.create(user);
+        final User createdUser = userController.create(user).getBody();
         final long id = createdUser.getId();
 
         assertEquals(createdUser, userController.getUsers().get(id), "Фильмы не совпадают.");
@@ -122,7 +122,7 @@ class UserControllerTest {
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
 
-        userController.create(user);
-        assertEquals(updatedUser, userController.update(updatedUser), "Юзеры разные");
+        userController.create(user).getBody();
+        assertEquals(updatedUser, userController.update(updatedUser).getBody(), "Юзеры разные");
     }
 }

@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.domain.Film;
@@ -26,23 +27,23 @@ public class FilmController {
     }
 
     @GetMapping
-    public Collection<Film> findAll(HttpServletRequest request) {
+    public ResponseEntity<Collection<Film>> findAll(HttpServletRequest request) {
         log.info("Получен запрос к эндпоинту: '{} {}', Строка параметров запроса: '{}'",
                 request.getMethod(), request.getRequestURI(), request.getQueryString());
-        return films.values();
+        return ResponseEntity.ok().body(films.values());
     }
 
     @PostMapping
-    public Film create(@Valid @RequestBody Film film) {
+    public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         film.setId(setIncrementedFilmId());
         films.put(film.getId(), film);
         log.info("Добавлен новый фильм: id - '{}', name - '{}'", film.getId(), film.getName());
-        return film;
+        return ResponseEntity.ok().body(film);
 
     }
 
     @PutMapping
-    public Film update(@Valid @RequestBody Film film) {
+    public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         if (films.values().stream().anyMatch(f -> f.getName().equals(film.getName()))) {
             Film updateFilm = (Film) films.values().stream().filter(f -> f.getName().equals(film.getName()));
             films.put(updateFilm.getId(), film);
@@ -51,6 +52,6 @@ public class FilmController {
             films.put(film.getId(), film);
             log.info("Фильм: '{}' - обновлен", film);
         }
-        return film;
+        return ResponseEntity.ok().body(film);
     }
 }
