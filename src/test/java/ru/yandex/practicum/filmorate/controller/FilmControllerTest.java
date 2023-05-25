@@ -17,16 +17,18 @@ import static org.junit.jupiter.api.Assertions.*;
 class FilmControllerTest {
     private FilmController filmController;
     private static Validator validator;
+
     static {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.usingContext().getValidator();
     }
+
     private Film film = Film.builder()
-                    .name("Dune")
-                    .description("Description")
-                    .duration(145)
-                    .releaseDate(LocalDate.of(2021, 9, 21))
-                    .build();
+            .name("Dune")
+            .description("Description")
+            .duration(145)
+            .releaseDate(LocalDate.of(2021, 9, 21))
+            .build();
 
     @BeforeEach
     public void setUp() {
@@ -52,6 +54,7 @@ class FilmControllerTest {
 
         assertEquals(createdFilm, filmController.getFilms().get(id), "Фильмы не совпадают.");
     }
+
     @Test
     @DisplayName("Создание фильма с некорректными полями")
     void shouldCreateFilmWithIncorrectlyFilledField() {
@@ -72,6 +75,7 @@ class FilmControllerTest {
         validates.stream().map(v -> v.getMessage())
                 .forEach(System.out::println);
     }
+
     @Test
     @DisplayName("Создание фильма с граничными полями")
     void shouldCreateFilmWithLimitValues() {

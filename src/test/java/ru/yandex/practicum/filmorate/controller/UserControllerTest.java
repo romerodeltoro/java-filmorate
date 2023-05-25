@@ -21,10 +21,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class UserControllerTest {
     private UserController userController;
     private static Validator validator;
+
     static {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
         validator = validatorFactory.usingContext().getValidator();
     }
+
     private User user = User.builder()
             .email("practicum@yandex.ru")
             .login("framework")
@@ -61,7 +63,7 @@ class UserControllerTest {
     @DisplayName("Создание юзера с некорректными полями")
     void shouldCreateUserWithIncorrectlyFilledField() {
         final User createdUser = User.builder()
-                .birthday(LocalDate.of(2023, 6,6))
+                .birthday(LocalDate.of(2023, 6, 6))
                 .build();
 
         final Set<ConstraintViolation<User>> validates = validator.validate(createdUser);
@@ -69,13 +71,14 @@ class UserControllerTest {
         validates.stream().map(v -> v.getMessage())
                 .forEach(System.out::println);
     }
+
     @Test
     @DisplayName("Создание юзера с граничными полями")
     void shouldCreateUserWithLimitValues() {
         final User createdUser = User.builder()
                 .email("email")
                 .login("")
-                .birthday(LocalDate.of(2023, 5,26))
+                .birthday(LocalDate.of(2023, 5, 26))
                 .build();
 
         final Set<ConstraintViolation<User>> validates = validator.validate(createdUser);
@@ -107,6 +110,7 @@ class UserControllerTest {
         userController.create(createdUser);
         assertEquals(createdUser.getLogin(), createdUser.getName());
     }
+
     @Test
     @DisplayName("Обновление юзера")
     void update() {

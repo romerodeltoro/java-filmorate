@@ -14,14 +14,14 @@ import java.time.LocalDate;
 @Builder
 public class User {
     private long id;
-    @NotBlank (message = "Электронная почта не может быть пустой")
-    @Email (message = "Электронная почта должна содержать символ @")
+    @NotBlank(message = "Электронная почта не может быть пустой")
+    @Email(message = "Электронная почта должна содержать символ @")
     private String email;
-    @NotBlank (message = "Логин не может быть пустым")
+    @NotBlank(message = "Логин не может быть пустым")
     private String login;
 
     private String name;
-    @Past (message = "Дата рождения не может быть в будущем")
+    @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
 
 }

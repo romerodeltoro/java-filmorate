@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.domain.User;
 
 import ru.yandex.practicum.filmorate.exception.ValidationException;
+
 import javax.validation.constraints.NotBlank;
 
 @Service
