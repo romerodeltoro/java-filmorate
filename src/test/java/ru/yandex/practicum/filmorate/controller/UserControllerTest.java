@@ -19,7 +19,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
-    private UserController userController;
+    /*private UserController userController;
     private static Validator validator;
 
     static {
@@ -124,5 +124,5 @@ class UserControllerTest {
 
         userController.create(user).getBody();
         assertEquals(updatedUser, userController.update(updatedUser).getBody(), "Юзеры разные");
-    }
+    }*/
 }

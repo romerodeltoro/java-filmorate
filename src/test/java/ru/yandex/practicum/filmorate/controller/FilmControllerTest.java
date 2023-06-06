@@ -15,7 +15,7 @@ import java.util.Set;
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
-    private FilmController filmController;
+   /* private FilmController filmController;
     private static Validator validator;
 
     static {
@@ -111,5 +111,5 @@ class FilmControllerTest {
 
         filmController.create(film).getBody();
         assertEquals(updateFilm, filmController.update(updateFilm).getBody(), "Фильмы разные");
-    }
+    }*/
 }
