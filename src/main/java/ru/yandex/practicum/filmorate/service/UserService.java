@@ -2,15 +2,18 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.domain.User;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import javax.validation.constraints.NotBlank;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Slf4j
 @Service
 @Getter
 @RequiredArgsConstructor
@@ -18,13 +21,16 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-    public String checkLoginToHaveNoSpaces(@NotBlank String login) {
+    /* Проверка Логина на присутстиве пробелов */
+   /* public String checkLoginToHaveNoSpaces(@NotBlank String login) {
         if (login.contains(" ")) {
-            throw new ValidationException("Логин не может содержать пробелы;");
+            throw new ValidationException(new ValidationErrorResponse(
+                    "login", "Логин не может содержать пробелы"));
         }
         return login;
-    }
+    }*/
 
+    /* Проверка поля Имя, если оно пустое, то заполняется как Логин */
     public User checkNameToBlank(User user) {
         if (user.getName() == null) {
             user.setName(user.getLogin());
@@ -35,19 +41,59 @@ public class UserService {
         return user;
     }
 
-    public void addFriend(User user1, User user2) {
-        user1.getFriends().add(user2.getId());
-        user2.getFriends().add(user1.getId());
+    public User createUser(User user) {
+        if (userStorage.getAllUsers().stream()
+                .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
+            throw new UserAlreadyExistException(String.format(
+                    "Пользователь с электронной почтой %s уже зарегистрирован.",
+                    user.getEmail()
+            ));
+        }
+        userStorage.addUser(user);
+        ;
+        return user;
     }
 
-    public void removeFriend(User user1, User user2) {
-        user1.getFriends().remove(user2.getId());
-        user2.getFriends().remove(user1.getId());
+    /* Добавляем пользователю в друзья другого пользователя */
+    public void addFriend(Long id, Long friendId) {
+        if (userStorage.getUser(id) == null) {
+            throw new UserNotFoundException(String.format("Пользователя с id %d нет в базе", id));
+        } else if (userStorage.getUser(friendId) == null) {
+            throw new UserNotFoundException(String.format("Пользователя с id %d нет в базе", friendId));
+        } else {
+            userStorage.getUser(id).getFriends().add(friendId);
+            userStorage.getUser(friendId).getFriends().add(id);
+        }
     }
 
-    public List<User> getFriends(User user) {
-        return  userStorage.getUsers().stream()
-                .filter(u -> u.getFriends().contains(u.getId()))
+    /* Удаляем пользователя из друзей */
+    public void removeFriend(Long id, Long friendId) {
+        if (userStorage.getUser(id) == null) {
+            throw new UserNotFoundException(String.format("Пользователя с id %d нет в базе", id));
+        } else if (userStorage.getUser(friendId) == null) {
+            throw new UserNotFoundException(String.format("Пользователя с id %d нет в базе", friendId));
+        } else {
+            userStorage.getUser(id).getFriends().remove(friendId);
+            userStorage.getUser(friendId).getFriends().remove(id);
+        }
+    }
+
+    /* Получаем список друзей пользователя */
+    public List<User> getFriends(Long id) {
+        List<Long> friendsId = new ArrayList<>(userStorage.getUser(id).getFriends());
+        return userStorage.getAllUsers().stream()
+                .filter(u -> friendsId.contains(u.getId()))
+                .collect(Collectors.toList());
+
+    }
+
+    /* Получаем список друзей, общих с другим пользователем */
+    public List<User> getCommonFriends(Long id, Long otherId) {
+        List<Long> myId = new ArrayList<>(userStorage.getUser(id).getFriends());
+        List<Long> friendId = new ArrayList<>(userStorage.getUser(otherId).getFriends());
+        return userStorage.getAllUsers().stream()
+                .filter(u -> myId.contains(u.getId()))
+                .filter(u -> friendId.contains(u.getId()))
                 .collect(Collectors.toList());
     }
 }

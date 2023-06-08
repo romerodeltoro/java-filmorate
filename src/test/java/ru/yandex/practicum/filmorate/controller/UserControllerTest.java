@@ -3,23 +3,22 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.domain.User;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
-    /*private UserController userController;
+    private UserController userController;
     private static Validator validator;
 
     static {
@@ -36,14 +35,14 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
-        userController = new UserController(new UserService());
+        userController = new UserController(new UserService(new InMemoryUserStorage()));
     }
 
     @Test
     @DisplayName("Получение списка юзеров")
     void findAll() {
         userController.create(user);
-        final List<User> users = new ArrayList<>(userController.getUsers().values());
+        final List<User> users = userController.getUserService().getUserStorage().getAllUsers();
         int size = users.size();
 
         assertNotNull(users, "Юзеры не возвращаются.");
@@ -56,13 +55,15 @@ class UserControllerTest {
         final User createdUser = userController.create(user).getBody();
         final long id = createdUser.getId();
 
-        assertEquals(createdUser, userController.getUsers().get(id), "Фильмы не совпадают.");
+        assertEquals(createdUser,
+                userController.getUserService().getUserStorage().getUser(id), "Фильмы не совпадают.");
     }
 
     @Test
     @DisplayName("Создание юзера с некорректными полями")
     void shouldCreateUserWithIncorrectlyFilledField() {
         final User createdUser = User.builder()
+                .login("lo gin")
                 .birthday(LocalDate.of(2023, 6, 6))
                 .build();
 
@@ -87,7 +88,7 @@ class UserControllerTest {
                 .forEach(System.out::println);
     }
 
-    @Test
+    /*@Test
     @DisplayName("Проверка исключения если логин с пробелами")
     void shouldCreateUserIfLoginWithSpaces() {
         final User createdUser = User.builder()
@@ -97,7 +98,7 @@ class UserControllerTest {
                 .birthday(LocalDate.of(2000, 1, 10))
                 .build();
         assertThrows(ValidationException.class, () -> userController.create(createdUser));
-    }
+    }*/
 
     @Test
     @DisplayName("Создание юзера с пустым именем")
@@ -115,7 +116,7 @@ class UserControllerTest {
     @DisplayName("Обновление юзера")
     void update() {
         final User updatedUser = User.builder()
-                .id(1L)
+                .id(3L)
                 .email("update-practicum@yandex.ru")
                 .login("update-framework")
                 .name("Update Spring")
@@ -124,5 +125,5 @@ class UserControllerTest {
 
         userController.create(user).getBody();
         assertEquals(updatedUser, userController.update(updatedUser).getBody(), "Юзеры разные");
-    }*/
+    }
 }

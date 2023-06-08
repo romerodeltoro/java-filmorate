@@ -3,19 +3,23 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.yandex.practicum.filmorate.domain.Film;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
-import javax.validation.*;
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
+import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
-   /* private FilmController filmController;
+    private FilmController filmController;
     private static Validator validator;
 
     static {
@@ -32,14 +36,14 @@ class FilmControllerTest {
 
     @BeforeEach
     public void setUp() {
-        filmController = new FilmController();
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(), new InMemoryUserStorage()));
     }
 
     @Test
     @DisplayName("Получение списка фильмов")
     void findAll() {
         filmController.create(film);
-        final List<Film> films = new ArrayList<>(filmController.getFilms().values());
+        final List<Film> films = filmController.getFilmService().getFilmStorage().getAllFilms();
         int size = films.size();
 
         assertNotNull(films, "Фильмы не возвращаются.");
@@ -52,7 +56,7 @@ class FilmControllerTest {
         final Film createdFilm = filmController.create(film).getBody();
         final long id = createdFilm.getId();
 
-        assertEquals(createdFilm, filmController.getFilms().get(id), "Фильмы не совпадают.");
+        assertEquals(createdFilm, filmController.getFilmService().getFilmStorage().getFilm(id), "Фильмы не совпадают.");
     }
 
     @Test
@@ -102,7 +106,7 @@ class FilmControllerTest {
     @DisplayName("Обновление фильма")
     void update() {
         final Film updateFilm = Film.builder()
-                .id(1L)
+                .id(3L)
                 .name("Update Film")
                 .description("New Description")
                 .duration(200)
@@ -111,5 +115,5 @@ class FilmControllerTest {
 
         filmController.create(film).getBody();
         assertEquals(updateFilm, filmController.update(updateFilm).getBody(), "Фильмы разные");
-    }*/
+    }
 }
