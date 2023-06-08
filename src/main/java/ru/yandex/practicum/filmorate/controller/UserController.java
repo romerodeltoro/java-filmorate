@@ -52,21 +52,21 @@ public class UserController {
     }
 
     @PutMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<String> addFriends(
+    public ResponseEntity<Void> addFriends(
             @PathVariable Long id,
             @PathVariable Long friendId) {
         userService.addFriend(id, friendId);
         log.info("Пользователь с id '{}' добавлен в друзья юзеру в с id '{}'", friendId, id);
-        return ResponseEntity.ok().body(String.format("Пользователь с id %d успешно добавлен в друзья", friendId));
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}/friends/{friendId}")
-    public ResponseEntity<String> removeFriends(
+    public ResponseEntity<Void> removeFriends(
             @PathVariable Long id,
             @PathVariable Long friendId) {
         userService.removeFriend(id, friendId);
         log.info("Пользователь с id '{}' удален из друзей юзера с id '{}'", friendId, id);
-        return ResponseEntity.ok().body(String.format("Пользователь с id %d удален из друзей", friendId));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{id}/friends")

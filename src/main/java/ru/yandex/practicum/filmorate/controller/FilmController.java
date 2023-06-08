@@ -52,23 +52,21 @@ public class FilmController {
     }
 
     @PutMapping("/{id}/like/{userId}")
-    public ResponseEntity<String> addLike(
+    public ResponseEntity<Void> addLike(
             @PathVariable Long id,
             @PathVariable Long userId) {
         filmService.addLikeToFilm(id, userId);
         log.info("Пользователь с id '{}' добавил лайк фильму с id '{}'", userId, id);
-        return ResponseEntity.ok().body(String.format("Вы поставили лайк фильму %s",
-                filmService.getFilmStorage().getFilm(id).getName()));
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{id}/like/{userId}")
-    public ResponseEntity<String> removeLike(
+    public ResponseEntity<Void> removeLike(
             @PathVariable Long id,
             @PathVariable Long userId) {
         filmService.removeLikeFromFilm(id, userId);
         log.info("Пользователь с id '{}' убрал лайк фильму с id '{}'", userId, id);
-        return ResponseEntity.ok().body(String.format("Вы убрали лайк фильму %s",
-                filmService.getFilmStorage().getFilm(id).getName()));
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/popular")
