@@ -3,15 +3,19 @@ package ru.yandex.practicum.filmorate.controller;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
+
+
 import java.util.List;
 import java.util.Set;
 
@@ -35,14 +39,18 @@ class UserControllerTest {
 
     @BeforeEach
     void setUp() {
+
         userController = new UserController(new UserService(new InMemoryUserStorage()));
+
     }
 
     @Test
     @DisplayName("Получение списка юзеров")
     void findAll() {
         userController.create(user);
+
         final List<User> users = userController.getUserService().getUserStorage().getAllUsers();
+
         int size = users.size();
 
         assertNotNull(users, "Юзеры не возвращаются.");
@@ -55,15 +63,19 @@ class UserControllerTest {
         final User createdUser = userController.create(user).getBody();
         final long id = createdUser.getId();
 
+
         assertEquals(createdUser,
                 userController.getUserService().getUserStorage().getUser(id), "Фильмы не совпадают.");
+
     }
 
     @Test
     @DisplayName("Создание юзера с некорректными полями")
     void shouldCreateUserWithIncorrectlyFilledField() {
         final User createdUser = User.builder()
+
                 .login("lo gin")
+
                 .birthday(LocalDate.of(2023, 6, 6))
                 .build();
 
@@ -104,6 +116,7 @@ class UserControllerTest {
     @DisplayName("Обновление юзера")
     void update() {
         final User updatedUser = User.builder()
+
                 .id(3L)
                 .email("update-practicum@yandex.ru")
                 .login("update-framework")

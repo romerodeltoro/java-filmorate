@@ -6,12 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
 import ru.yandex.practicum.filmorate.model.User;
+
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collection;
+
 
 @Slf4j
 @Getter
@@ -20,26 +23,33 @@ import java.util.Collection;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
+
     private final UserService userService;
+
 
     @GetMapping
     public ResponseEntity<Collection<User>> findAll(HttpServletRequest request) {
         log.info("Получен запрос к эндпоинту: '{} {}', Строка параметров запроса: '{}'",
                 request.getMethod(), request.getRequestURI(), request.getQueryString());
 
+
         return ResponseEntity.ok().body(userService.getUserStorage().getAllUsers());
+
     }
 
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
+
         ResponseEntity.ok(userService.checkNameToBlank(user));
         userService.createUser(user);
         log.info("Добавлен новый пользователь: '{}'", user);
+
         return ResponseEntity.ok().body(user);
     }
 
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
+
         userService.getUserStorage().updateUser(user);
         log.info("Пользователь '{}' - обновлен", user);
         return ResponseEntity.ok().body(user);
@@ -82,4 +92,5 @@ public class UserController {
         log.info("Получен список общих друзей пользователя с id '{}' и пользователя с id '{}'", id, otherId);
         return ResponseEntity.ok().body(userService.getCommonFriends(id, otherId));
     }
+
 }

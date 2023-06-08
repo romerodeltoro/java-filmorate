@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class UserService {
 
 
     /* Проверка поля Имя, если оно пустое, то заполняется как Логин */
+
     public User checkNameToBlank(User user) {
         if (user.getName() == null) {
             user.setName(user.getLogin());
@@ -32,6 +34,7 @@ public class UserService {
         }
         return user;
     }
+
 
     /* Создание пользователя */
     public User createUser(User user) {
@@ -89,4 +92,5 @@ public class UserService {
                 .filter(u -> friendId.contains(u.getId()))
                 .collect(Collectors.toList());
     }
+
 }
