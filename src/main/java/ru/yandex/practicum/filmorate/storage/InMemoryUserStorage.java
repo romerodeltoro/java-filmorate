@@ -25,7 +25,11 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public User getUser(Long id) {
-        return users.get(id);
+        if (users.containsKey(id)) {
+            return users.get(id);
+        } else {
+            throw new UserNotFoundException(String.format("Пользователя с id %d нет в базе", id));
+        }
     }
 
     public void addUser(User user) {
@@ -34,15 +38,6 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     public void updateUser(User user) {
-        /*if (users.values().stream().anyMatch(u -> u.getName().equals(user.getName()))) {
-            User updatedUser = users.values().stream()
-                    .filter(u -> u.getName().equals(user.getName()))
-                    .findFirst()
-                    .get();
-            user.setId(updatedUser.getId());
-            users.put(updatedUser.getId(), user);
-            return;
-        }*/
 
         if (users.values().stream().anyMatch(u -> u.getId() == user.getId())) {
             long id = users.values().stream()
@@ -52,8 +47,6 @@ public class InMemoryUserStorage implements UserStorage {
                     .getId();
             users.put(id, user);
         } else {
-            /*user.setId(setIncrementedUserId());
-            users.put(user.getId(), user);*/
             throw new UserNotFoundException(String.format("Юзера с id %d нет в базе", user.getId()));
         }
     }
