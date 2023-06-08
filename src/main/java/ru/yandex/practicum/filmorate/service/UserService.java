@@ -21,14 +21,6 @@ public class UserService {
 
     private final UserStorage userStorage;
 
-    /* Проверка Логина на присутстиве пробелов */
-   /* public String checkLoginToHaveNoSpaces(@NotBlank String login) {
-        if (login.contains(" ")) {
-            throw new ValidationException(new ValidationErrorResponse(
-                    "login", "Логин не может содержать пробелы"));
-        }
-        return login;
-    }*/
 
     /* Проверка поля Имя, если оно пустое, то заполняется как Логин */
     public User checkNameToBlank(User user) {
@@ -41,6 +33,7 @@ public class UserService {
         return user;
     }
 
+    /* Создание пользователя */
     public User createUser(User user) {
         if (userStorage.getAllUsers().stream()
                 .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
@@ -50,7 +43,7 @@ public class UserService {
             ));
         }
         userStorage.addUser(user);
-        ;
+
         return user;
     }
 

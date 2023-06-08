@@ -88,18 +88,6 @@ class UserControllerTest {
                 .forEach(System.out::println);
     }
 
-    /*@Test
-    @DisplayName("Проверка исключения если логин с пробелами")
-    void shouldCreateUserIfLoginWithSpaces() {
-        final User createdUser = User.builder()
-                .email("practicum@yandex.ru")
-                .login("lo gin")
-                .name("Name")
-                .birthday(LocalDate.of(2000, 1, 10))
-                .build();
-        assertThrows(ValidationException.class, () -> userController.create(createdUser));
-    }*/
-
     @Test
     @DisplayName("Создание юзера с пустым именем")
     void shouldCreateUserWithEmptyName() {
