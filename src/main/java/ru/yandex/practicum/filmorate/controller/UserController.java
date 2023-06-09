@@ -6,13 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.domain.User;
+import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collection;
-import java.util.HashMap;
 
 @Slf4j
 @Getter
@@ -21,42 +20,66 @@ import java.util.HashMap;
 @RequestMapping("/users")
 @RequiredArgsConstructor
 public class UserController {
-    private HashMap<Long, User> users = new HashMap<>();
     private final UserService userService;
-    private static long incrementedUserId = 0;
-
-    private long setIncrementedUserId() {
-        return ++incrementedUserId;
-    }
 
     @GetMapping
     public ResponseEntity<Collection<User>> findAll(HttpServletRequest request) {
         log.info("Получен запрос к эндпоинту: '{} {}', Строка параметров запроса: '{}'",
                 request.getMethod(), request.getRequestURI(), request.getQueryString());
-        return ResponseEntity.ok().body(users.values());
+
+        return ResponseEntity.ok().body(userService.getUserStorage().getAllUsers());
     }
 
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
-        ResponseEntity.ok(userService.checkLoginToHaveNoSpaces(user.getLogin()));
         ResponseEntity.ok(userService.checkNameToBlank(user));
-        user.setId(setIncrementedUserId());
-        users.put(user.getId(), user);
-        log.info("Добавлен новый юзер: '{}'", user);
+        userService.createUser(user);
+        log.info("Добавлен новый пользователь: '{}'", user);
         return ResponseEntity.ok().body(user);
     }
 
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
-        if (users.values().stream().anyMatch(f -> f.getName().equals(user.getName()))) {
-            User updateUser = (User) users.values().stream().filter(f -> f.getName().equals(user.getName()));
-            users.put(updateUser.getId(), user);
-            log.info("User '{}' - обновлен", user);
-        } else {
-            users.put(user.getId(), user);
-            log.info("User '{}' - обновлен", user);
-        }
+        userService.getUserStorage().updateUser(user);
+        log.info("Пользователь '{}' - обновлен", user);
         return ResponseEntity.ok().body(user);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getUser(@PathVariable Long id) {
+        log.info("Получены данные о пользователе с id '{}'", id);
+        return ResponseEntity.ok().body(userService.getUserStorage().getUser(id));
+    }
+
+    @PutMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<Void> addFriends(
+            @PathVariable Long id,
+            @PathVariable Long friendId) {
+        userService.addFriend(id, friendId);
+        log.info("Пользователь с id '{}' добавлен в друзья юзеру в с id '{}'", friendId, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping("/{id}/friends/{friendId}")
+    public ResponseEntity<Void> removeFriends(
+            @PathVariable Long id,
+            @PathVariable Long friendId) {
+        userService.removeFriend(id, friendId);
+        log.info("Пользователь с id '{}' удален из друзей юзера с id '{}'", friendId, id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}/friends")
+    public ResponseEntity<Collection<User>> getUserFriends(@PathVariable Long id) {
+        log.info("Получен список друзей пользователя с id '{}'", id);
+        return ResponseEntity.ok().body(userService.getFriends(id));
+    }
+
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public ResponseEntity<Collection<User>> getCommonFriends(
+            @PathVariable Long id,
+            @PathVariable Long otherId) {
+        log.info("Получен список общих друзей пользователя с id '{}' и пользователя с id '{}'", id, otherId);
+        return ResponseEntity.ok().body(userService.getCommonFriends(id, otherId));
+    }
 }
