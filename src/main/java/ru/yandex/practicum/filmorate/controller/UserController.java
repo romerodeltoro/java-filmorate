@@ -17,11 +17,15 @@ import java.util.Collection;
 @Getter
 @Validated
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users")
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
 
+
+    /**
+     * Выводим всех пользователей
+     */
     @GetMapping
     public ResponseEntity<Collection<User>> findAll(HttpServletRequest request) {
         log.info("Получен запрос к эндпоинту: '{} {}', Строка параметров запроса: '{}'",
@@ -30,6 +34,9 @@ public class UserController {
         return ResponseEntity.ok().body(userService.getUserStorage().getAllUsers());
     }
 
+    /**
+     * Создание пользователя
+     */
     @PostMapping
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         ResponseEntity.ok(userService.checkNameToBlank(user));
@@ -38,19 +45,28 @@ public class UserController {
         return ResponseEntity.ok().body(user);
     }
 
+    /**
+     * Обновляем пользователя
+     */
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
-        userService.getUserStorage().updateUser(user);
+        userService.updateUser(user);
         log.info("Пользователь '{}' - обновлен", user);
         return ResponseEntity.ok().body(user);
     }
 
+    /**
+     * Получаем пользователя
+     */
     @GetMapping("/{id}")
     public ResponseEntity<User> getUser(@PathVariable Long id) {
         log.info("Получены данные о пользователе с id '{}'", id);
         return ResponseEntity.ok().body(userService.getUserStorage().getUser(id));
     }
 
+    /**
+     * Добовляем в список друзей пользователя
+     */
     @PutMapping("/{id}/friends/{friendId}")
     public ResponseEntity<Void> addFriends(
             @PathVariable Long id,
@@ -60,6 +76,9 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Удаляем из друзей пользователя
+     */
     @DeleteMapping("/{id}/friends/{friendId}")
     public ResponseEntity<Void> removeFriends(
             @PathVariable Long id,
@@ -69,12 +88,18 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+    /**
+     * Получаем список друзей пользователя
+     */
     @GetMapping("/{id}/friends")
     public ResponseEntity<Collection<User>> getUserFriends(@PathVariable Long id) {
         log.info("Получен список друзей пользователя с id '{}'", id);
         return ResponseEntity.ok().body(userService.getFriends(id));
     }
 
+    /**
+     * Выводим общих друзей пользователей
+     */
     @GetMapping("/{id}/friends/common/{otherId}")
     public ResponseEntity<Collection<User>> getCommonFriends(
             @PathVariable Long id,
