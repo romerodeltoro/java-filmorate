@@ -78,7 +78,7 @@ public class FilmController {
 
 
     /**
-     * Юзер удаляет лайк    
+     * Юзер удаляет лайк
      */
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<Void> removeLike(
