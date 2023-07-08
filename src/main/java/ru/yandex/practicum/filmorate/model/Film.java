@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+
 import com.fasterxml.jackson.annotation.JsonSetter;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -46,4 +47,5 @@ public class Film {
         this.genres.clear();
         this.genres.addAll(genres);
     }
+
 }

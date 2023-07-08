@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +22,7 @@ import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
+
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -30,6 +32,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 class FilmControllerTest {
+  
     private final UserDBStorage userStorage;
     private final FilmDBStorage filmStorage;
     private static Validator validator;
@@ -52,6 +55,13 @@ class FilmControllerTest {
             .name("Spring Boot")
             .birthday(LocalDate.of(2002, 11, 16))
             .build();
+    private User user = User.builder()
+            .email("practicum@yandex.ru")
+            .login("framework")
+            .name("Spring Boot")
+            .birthday(LocalDate.of(2002, 11, 16))
+            .build();
+
 
     @Test
     @DisplayName("Получение списка фильмов")
@@ -132,6 +142,7 @@ class FilmControllerTest {
     @Test
     @DisplayName("Обновление фильма")
     void update() {
+
         final long id = filmStorage.addFilm(film).getId();
 
         final Film updateFilm = new Film();
@@ -249,5 +260,79 @@ class FilmControllerTest {
         filmStorage.updateFilm(film);
 
         assertEquals(0, filmStorage.getFilm(id).getGenres().size());
+    }
+
+    @Test
+    @DisplayName("Получение фильма")
+    void getUser() {
+        final Film createdFilm = filmController.create(film).getBody();
+        final long id = createdFilm.getId();
+
+        assertEquals(createdFilm,
+                filmController.getFilm(id).getBody(), "Пользователи не совпадают.");
+    }
+
+    @Test
+    @DisplayName("Лайк фильму")
+    void addLike() {
+        final long id = filmController.create(film).getBody().getId();
+        final long userId = userController.create(user).getBody().getId();
+        filmController.addLike(id, userId);
+
+        assertTrue(filmController.getFilmService().getFilmStorage().getFilm(id).getLikes().contains(userId));
+    }
+
+    @Test
+    @DisplayName("Удаление лайка у фильма")
+    void removeLike() {
+        final long id = filmController.create(film).getBody().getId();
+        final long userId = userController.create(user).getBody().getId();
+        filmController.addLike(id, userId);
+        filmController.removeLike(id, userId);
+
+        assertFalse(filmController.getFilmService().getFilmStorage().getFilm(id).getLikes().contains(userId));
+    }
+
+    @Test
+    @DisplayName("Получение самых популярных фильмов")
+    void getMostLikeFilms() {
+        final Film film2 = Film.builder()
+                .name("Interstellar")
+                .description("Description")
+                .duration(169)
+                .releaseDate(LocalDate.of(2014, 9, 21))
+                .build();
+        final Film film3 = Film.builder()
+                .name("Alien Covenant")
+                .description("Description")
+                .duration(110)
+                .releaseDate(LocalDate.of(2017, 9, 21))
+                .build();
+        final User user2 = User.builder()
+                .email("mail@yandex.ru")
+                .login("framework-friend")
+                .name("Friend")
+                .birthday(LocalDate.of(2002, 11, 16))
+                .build();
+        final long idFilm1 = filmController.create(film).getBody().getId();
+        final long idFilm2 = filmController.create(film2).getBody().getId();
+        final long idFilm3 = filmController.create(film3).getBody().getId();
+        final long userId = userController.create(user).getBody().getId();
+        final long user2Id = userController.create(user2).getBody().getId();
+
+        filmController.addLike(idFilm1, userId);
+        filmController.addLike(idFilm1, user2Id);
+        filmController.addLike(idFilm2, userId);
+
+        final List<Film> likedFilms = filmController.getMostLikeFilms(3L).getBody();
+
+        assertEquals(likedFilms, filmController.getFilmService().getMostLikeFilms(3L));
+        assertEquals(idFilm1, filmController.getFilmService().getMostLikeFilms(3L).get(0).getId());
+        assertEquals(idFilm2, filmController.getFilmService().getMostLikeFilms(3L).get(1).getId());
+        assertEquals(idFilm3, filmController.getFilmService().getMostLikeFilms(3L).get(2).getId());
+        assertEquals(2, filmController.getFilm(idFilm1).getBody().getLikes().size());
+        assertEquals(1, filmController.getFilm(idFilm2).getBody().getLikes().size());
+        assertEquals(0, filmController.getFilm(idFilm3).getBody().getLikes().size());
+
     }
 }

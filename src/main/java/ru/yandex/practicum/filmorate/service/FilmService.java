@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
+
 import java.util.Collection;
 import java.util.stream.Collectors;
 
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 @Getter
 @RequiredArgsConstructor
 public class FilmService {
+
     @Autowired
     @Qualifier("filmStorage")
     private FilmStorage filmStorage;
@@ -81,6 +83,7 @@ public class FilmService {
         } else if (userStorage.getUser(userId) == null) {
             throw new UserNotFoundException(String.format("Пользователя с id %d нет в базе", userId));
         } else {
+
             filmStorage.removeLike(filmId, userId);
         }
     }
@@ -101,7 +104,6 @@ public class FilmService {
                 .sorted((f1, f2) -> (f2.getLikes() - f1.getLikes()))
                 .limit(count)
                 .collect(Collectors.toSet());
-
 
     }
 }

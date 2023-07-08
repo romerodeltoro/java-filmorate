@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserAlreadyExistException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
@@ -18,6 +19,7 @@ import java.util.List;
 @Getter
 @RequiredArgsConstructor
 public class UserService {
+
 
     @Autowired
     @Qualifier("userStorage")
@@ -37,6 +39,7 @@ public class UserService {
         return user;
     }
 
+
     /**
      * Создание пользователя
      */
@@ -44,6 +47,7 @@ public class UserService {
         if (userStorage.getAllUsers().stream()
                 .anyMatch(u -> u.getEmail().equals(user.getEmail()))) {
             throw new UserAlreadyExistException(String.format(
+
                     "Пользователь с электронной почтой %s уже зарегистрирован.", user.getEmail()
             ));
         }
@@ -99,5 +103,6 @@ public class UserService {
      */
     public List<User> getCommonFriends(Long id, Long otherId) {
         return userStorage.getCommonFriends(id, otherId);
+
     }
 }

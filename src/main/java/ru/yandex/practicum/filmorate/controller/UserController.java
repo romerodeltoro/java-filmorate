@@ -50,10 +50,12 @@ public class UserController {
      */
     @PutMapping
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
+
         userService.updateUser(user);
         log.info("Пользователь '{}' - обновлен", user);
         return ResponseEntity.ok().body(user);
     }
+
 
     /**
      * Получаем пользователя
@@ -63,6 +65,7 @@ public class UserController {
         log.info("Получены данные о пользователе с id '{}'", id);
         return ResponseEntity.ok().body(userService.getUserStorage().getUser(id));
     }
+
 
     /**
      * Добовляем в список друзей пользователя
@@ -76,6 +79,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+
     /**
      * Удаляем из друзей пользователя
      */
@@ -88,6 +92,7 @@ public class UserController {
         return ResponseEntity.noContent().build();
     }
 
+
     /**
      * Получаем список друзей пользователя
      */
@@ -96,6 +101,7 @@ public class UserController {
         log.info("Получен список друзей пользователя с id '{}'", id);
         return ResponseEntity.ok().body(userService.getFriends(id));
     }
+
 
     /**
      * Выводим общих друзей пользователей

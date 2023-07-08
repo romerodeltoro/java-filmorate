@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collection;
 
+
 @Slf4j
 @Getter
 @Validated
@@ -53,6 +54,7 @@ public class FilmController {
         return ResponseEntity.ok().body(film);
     }
 
+
     /**
      * Получаем фильм
      */
@@ -74,8 +76,9 @@ public class FilmController {
         return ResponseEntity.noContent().build();
     }
 
+
     /**
-     * Юзер удаляет лайк
+     * Юзер удаляет лайк    
      */
     @DeleteMapping("/{id}/like/{userId}")
     public ResponseEntity<Void> removeLike(
@@ -85,6 +88,7 @@ public class FilmController {
         log.info("Пользователь с id '{}' убрал лайк фильму с id '{}'", userId, id);
         return ResponseEntity.noContent().build();
     }
+
 
     /**
      * Получаем самые популярные фильмы

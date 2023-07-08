@@ -6,6 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
 import ru.yandex.practicum.filmorate.exception.*;
 import ru.yandex.practicum.filmorate.model.ResponseError;
 
@@ -42,6 +43,7 @@ public class ErrorHandler {
                 .body(new ResponseError(e.getMessage()));
     }
 
+
     @ExceptionHandler(MpaNotFoundException.class)
     public ResponseEntity<ResponseError> mpaNotFoundException(MpaNotFoundException e) {
         log.error(e.getMessage());
@@ -57,6 +59,7 @@ public class ErrorHandler {
                 .status(HttpStatus.NOT_FOUND)
                 .body(new ResponseError(e.getMessage()));
     }
+
 
     @ExceptionHandler({NotWritableException.class, UserAlreadyExistException.class})
     public ResponseEntity<ResponseError> notWritableException(RuntimeException e) {

@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -43,12 +44,14 @@ public class UserControllerTest {
             .birthday(LocalDate.of(2002, 11, 16))
             .build();
 
+
     @Test
     @DisplayName("Получение списка юзеров")
     void findAll() {
         final User createdUser = userStorage.addUser(user);
 
         final List<User> users = userStorage.getAllUsers();
+
         int size = users.size();
 
         assertNotNull(users, "Юзеры не возвращаются.");
@@ -63,6 +66,7 @@ public class UserControllerTest {
 
         assertEquals(createdUser,
                 userStorage.getUser(id), "Пользователи не совпадают.");
+
     }
 
     @Test
@@ -114,12 +118,15 @@ public class UserControllerTest {
 
         assertEquals(createdUser,
                 userStorage.getUser(id), "Пользователи не совпадают.");
+
     }
 
     @Test
     @DisplayName("Обновление юзера")
     void update() {
+
         final long id = userStorage.addUser(user).getId();
+
         final User updatedUser = User.builder()
                 .id(id)
                 .email("update-practicum@yandex.ru")
@@ -127,6 +134,7 @@ public class UserControllerTest {
                 .name("Update Spring")
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
+
 
         assertEquals(updatedUser, userStorage.updateUser(updatedUser), "Юзеры разные");
     }
@@ -207,6 +215,88 @@ public class UserControllerTest {
         userStorage.addUserFriend(id, user3Id);
 
         assertTrue(userStorage.getCommonFriends(user2Id, user3Id)
+                .stream().allMatch(u -> u.getId() == id));
+    }
+
+    @Test
+    @DisplayName("Добавление друзей")
+    void addFriends() {
+        final User friend = User.builder()
+                .email("mail@yandex.ru")
+                .login("framework-friend")
+                .name("Friend")
+                .birthday(LocalDate.of(2002, 11, 16))
+                .build();
+        long id = userController.create(user).getBody().getId();
+        long friendId = userController.create(friend).getBody().getId();
+
+        userController.addFriends(id, friendId);
+        assertNotNull(userController.getUserService().getUserStorage().getUser(id).getFriends());
+        assertNotNull(userController.getUserService().getUserStorage().getUser(friendId).getFriends());
+
+    }
+
+    @Test
+    @DisplayName("Удаление друзей")
+    void removeFriends() {
+        final User friend = User.builder()
+                .email("mail@yandex.ru")
+                .login("framework-friend")
+                .name("Friend")
+                .birthday(LocalDate.of(2002, 11, 16))
+                .build();
+        long id = userController.create(user).getBody().getId();
+        long friendId = userController.create(friend).getBody().getId();
+
+        userController.addFriends(id, friendId);
+        userController.removeFriends(id, friendId);
+
+        assertTrue(userController.getUserService().getUserStorage().getUser(id).getFriends().isEmpty());
+        assertTrue(userController.getUserService().getUserStorage().getUser(friendId).getFriends().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Получение друзей юзера")
+    void getUserFriends() {
+        final User friend = User.builder()
+                .email("mail@yandex.ru")
+                .login("framework-friend")
+                .name("Friend")
+                .birthday(LocalDate.of(2002, 11, 16))
+                .build();
+        long id = userController.create(user).getBody().getId();
+        long friendId = userController.create(friend).getBody().getId();
+
+        userController.addFriends(id, friendId);
+
+        assertEquals(1, userController.getUserFriends(id).getBody().size());
+
+    }
+
+    @Test
+    @DisplayName("Получение общих друзей")
+    void getCommonFriends() {
+        final User user2 = User.builder()
+                .email("mail@yandex.ru")
+                .login("framework-friend")
+                .name("Friend")
+                .birthday(LocalDate.of(2002, 11, 16))
+                .build();
+
+        final User user3 = User.builder()
+                .email("mail@mail.ru")
+                .login("usver")
+                .birthday(LocalDate.of(2002, 11, 16))
+                .build();
+
+        long id = userController.create(user).getBody().getId();
+        long user2Id = userController.create(user2).getBody().getId();
+        long user3Id = userController.create(user3).getBody().getId();
+
+        userController.addFriends(id, user2Id);
+        userController.addFriends(id, user3Id);
+
+        assertTrue(userController.getCommonFriends(user2Id, user3Id).getBody()
                 .stream().allMatch(u -> u.getId() == id));
 
     }
