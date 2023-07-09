@@ -18,7 +18,7 @@ public class MpaDaoImpl implements MpaDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Mpa getMpa(int id) {
+    public Mpa getMpa(Long id) {
         String sqlQuery = "SELECT * " +
                 "FROM mpa " +
                 "WHERE mpa_id = ?";
@@ -40,7 +40,7 @@ public class MpaDaoImpl implements MpaDao {
 
     private RowMapper<Mpa> mpaRowMapper() {
         return (rs, rowNum) -> Mpa.builder()
-                .id(rs.getInt("mpa_id"))
+                .id(rs.getLong("mpa_id"))
                 .name(rs.getString("mpa_name"))
                 .build();
     }

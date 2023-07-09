@@ -17,7 +17,7 @@ public class GenreDaoImpl implements GenreDao {
     private final JdbcTemplate jdbcTemplate;
 
     @Override
-    public Genre getGenre(int id) {
+    public Genre getGenre(Long id) {
         List<Genre> genres = jdbcTemplate.query(
                 "SELECT * " +
                         "FROM genres " +
@@ -45,7 +45,7 @@ public class GenreDaoImpl implements GenreDao {
 
     private RowMapper<Genre> genreRowMapper() {
         return (rs, rowNum) -> Genre.builder()
-                .id(rs.getInt("genre_id"))
+                .id(rs.getLong("genre_id"))
                 .name(rs.getString("genre_name"))
                 .build();
 

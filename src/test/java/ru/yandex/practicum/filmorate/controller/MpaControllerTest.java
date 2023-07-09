@@ -36,8 +36,8 @@ public class MpaControllerTest {
     @Test
     @DisplayName("Получение существующего рейтинга")
     void getMpaWithRightId() {
-        final Mpa mpa = mpaDao.getMpa(1);
-        final int id = mpa.getId();
+        final Mpa mpa = mpaDao.getMpa(1L);
+        final long id = mpa.getId();
 
         assertEquals(mpa,
                 mpaDao.getMpa(id), "Рейтинги не совпадают.");
@@ -46,7 +46,7 @@ public class MpaControllerTest {
     @Test
     @DisplayName("Получение рейтинга по неверному id")
     void getMpaWithNotExistsId() {
-        int id = 666;
+        long id = 666L;
         final MpaNotFoundException e = assertThrows(
                 MpaNotFoundException.class,
                 () -> mpaDao.getMpa(id)

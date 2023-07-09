@@ -36,8 +36,8 @@ public class GenreControllerTest {
     @Test
     @DisplayName("Получение существующего жанра")
     void getMpaWithRightId() {
-        final Genre genre = genreDao.getGenre(1);
-        final int id = genre.getId();
+        final Genre genre = genreDao.getGenre(1L);
+        final Long id = genre.getId();
 
         assertEquals(genre,
                 genreDao.getGenre(id), "Рейтинги не совпадают.");
@@ -46,7 +46,7 @@ public class GenreControllerTest {
     @Test
     @DisplayName("Получение жанра по неверному id")
     void getMpaWithNotExistsId() {
-        int id = 666;
+        Long id = 666L;
         final GenreNotFoundException e = assertThrows(
                 GenreNotFoundException.class,
                 () -> genreDao.getGenre(id)

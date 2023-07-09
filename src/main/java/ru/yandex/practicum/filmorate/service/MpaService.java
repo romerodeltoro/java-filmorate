@@ -18,7 +18,7 @@ public class MpaService {
 
     private final MpaDaoImpl mpaDao;
 
-    public Mpa getMpa(int id) {
+    public Mpa getMpa(Long id) {
         if (mpaDao.getMpa(id) == null) {
             throw new MpaNotFoundException(String.format("Рейтинга с id %d нет в базе", id));
         }

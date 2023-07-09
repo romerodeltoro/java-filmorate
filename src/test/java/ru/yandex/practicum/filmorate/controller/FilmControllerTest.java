@@ -3,7 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +21,6 @@ import javax.validation.ValidatorFactory;
 import java.time.LocalDate;
 import java.util.Collection;
 import java.util.HashSet;
-
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -47,7 +45,9 @@ class FilmControllerTest {
             "Description",
             LocalDate.of(2021, 9, 21),
             145,
-            Mpa.builder().id(3).name("PG-13").build());
+            Mpa.builder().id(3L).name("PG-13").build(),
+            0);
+
 
     private User user = User.builder()
             .email("practicum@yandex.ru")
@@ -143,7 +143,7 @@ class FilmControllerTest {
         updateFilm.setDescription("New Description");
         updateFilm.setDuration(200);
         updateFilm.setReleaseDate(LocalDate.of(2000, 5, 25));
-        updateFilm.setMpa(Mpa.builder().id(2).build());
+        updateFilm.setMpa(Mpa.builder().id(2L).build());
 
         assertEquals(updateFilm, filmStorage.updateFilm(updateFilm), "Фильмы разные");
     }
@@ -179,14 +179,14 @@ class FilmControllerTest {
         film2.setDescription("Description");
         film2.setDuration(169);
         film2.setReleaseDate(LocalDate.of(2014, 9, 21));
-        film2.setMpa(Mpa.builder().id(1).build());
+        film2.setMpa(Mpa.builder().id(1L).build());
 
         final Film film3 = new Film();
         film3.setName("Alien Covenant");
         film3.setDescription("Description");
         film3.setDuration(110);
         film3.setReleaseDate(LocalDate.of(2017, 9, 21));
-        film3.setMpa(Mpa.builder().id(2).build());
+        film3.setMpa(Mpa.builder().id(2L).build());
 
         final User user2 = User.builder()
                 .email("mail@yandex.ru")
@@ -223,9 +223,9 @@ class FilmControllerTest {
         filmWithGenre.setDescription("Description");
         filmWithGenre.setDuration(169);
         filmWithGenre.setReleaseDate(LocalDate.of(2014, 9, 21));
-        filmWithGenre.setMpa(Mpa.builder().id(1).build());
+        filmWithGenre.setMpa(Mpa.builder().id(1L).build());
         Set<Genre> genres = new HashSet<>();
-        genres.add(Genre.builder().id(1).build());
+        genres.add(Genre.builder().id(1L).build());
         filmWithGenre.setGenres(genres);
 
         filmStorage.updateFilm(filmWithGenre);
@@ -244,9 +244,9 @@ class FilmControllerTest {
         filmWithGenre.setDescription("Description");
         filmWithGenre.setDuration(169);
         filmWithGenre.setReleaseDate(LocalDate.of(2014, 9, 21));
-        filmWithGenre.setMpa(Mpa.builder().id(1).build());
+        filmWithGenre.setMpa(Mpa.builder().id(1L).build());
         Set<Genre> genres = new HashSet<>();
-        genres.add(Genre.builder().id(1).build());
+        genres.add(Genre.builder().id(1L).build());
         filmWithGenre.setGenres(genres);
 
         filmStorage.updateFilm(filmWithGenre);

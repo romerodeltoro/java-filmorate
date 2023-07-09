@@ -17,7 +17,7 @@ public class GenreService {
 
     private final GenreDao genreDao;
 
-    public Genre getGenre(int id) {
+    public Genre getGenre(Long id) {
         return genreDao.getGenre(id);
     }
 

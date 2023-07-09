@@ -50,13 +50,13 @@ public class FilmDBStorage implements FilmStorage {
                     film.setReleaseDate((LocalDate.parse(rs.getString("releaseDate"))));
                     film.setDuration((rs.getInt("duration")));
                     film.setMpa(Mpa.builder()
-                            .id(rs.getInt("mpa_id"))
+                            .id(rs.getLong("mpa_id"))
                             .name(rs.getString("mpa_name"))
                             .build());
                     if (rs.getInt("genre_id") != 0) {
                         Set<Genre> genres = new HashSet<>();
                         genres.add(Genre.builder()
-                                .id(rs.getInt("genre_id"))
+                                .id(rs.getLong("genre_id"))
                                 .name(rs.getString("genre_name"))
                                 .build());
                         film.setGenres(genres);
@@ -64,7 +64,7 @@ public class FilmDBStorage implements FilmStorage {
                     films.put(filmId, film);
                 }
                 Genre.GenreBuilder genreBuilder = Genre.builder()
-                        .id(rs.getInt("genre_id"))
+                        .id(rs.getLong("genre_id"))
                         .name(rs.getString("genre_name"));
                 if (film.getGenres().size() != 0 && !film.getGenres().contains(genreBuilder.build())) {
                     film.getGenres().add(genreBuilder.build());
@@ -139,7 +139,7 @@ public class FilmDBStorage implements FilmStorage {
     }
 
     @Override
-    public void addLikeToFilm(long filmId, long userId) {
+    public void addLikeToFilm(Long filmId, Long userId) {
         String sqlQuery =
                 "INSERT INTO film_likes (film_id, user_id) " +
                         "VALUES (?, ?)";
@@ -180,13 +180,13 @@ public class FilmDBStorage implements FilmStorage {
                     film.setDuration((rs.getInt("duration")));
                     film.setLikes(rs.getInt("COUNT(fl.user_id)"));
                     film.setMpa(Mpa.builder()
-                            .id(rs.getInt("mpa_id"))
+                            .id(rs.getLong("mpa_id"))
                             .name(rs.getString("mpa_name"))
                             .build());
                     if (rs.getInt("genre_id") != 0) {
                         Set<Genre> genres = new HashSet<>();
                         genres.add(Genre.builder()
-                                .id(rs.getInt("genre_id"))
+                                .id(rs.getLong("genre_id"))
                                 .name(rs.getString("genre_name"))
                                 .build());
                         film.setGenres(genres);
@@ -194,7 +194,7 @@ public class FilmDBStorage implements FilmStorage {
                     films.put(filmId, film);
                 }
                 Genre.GenreBuilder genreBuilder = Genre.builder()
-                        .id(rs.getInt("genre_id"))
+                        .id(rs.getLong("genre_id"))
                         .name(rs.getString("genre_name"));
                 if (film.getGenres().size() != 0 && !film.getGenres().contains(genreBuilder.build())) {
                     film.getGenres().add(genreBuilder.build());
@@ -216,7 +216,7 @@ public class FilmDBStorage implements FilmStorage {
             film.setReleaseDate((LocalDate.parse(rs.getString("releaseDate"))));
             film.setDuration((rs.getInt("duration")));
             film.setMpa(Mpa.builder()
-                    .id(rs.getInt("mpa_id"))
+                    .id(rs.getLong("mpa_id"))
                     .name(rs.getString("mpa_name"))
                     .build());
             film.setLikes(rs.getInt("count(fl.user_id)"));
@@ -224,7 +224,7 @@ public class FilmDBStorage implements FilmStorage {
             if (rs.getInt("genre_id") != 0) {
                 do {
                     Genre.GenreBuilder genreBuilder = Genre.builder()
-                            .id(rs.getInt("genre_id"))
+                            .id(rs.getLong("genre_id"))
                             .name(rs.getString("genre_name"));
                     genres.add(genreBuilder.build());
                 } while (rs.next());

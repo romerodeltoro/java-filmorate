@@ -37,7 +37,7 @@ public class MpaController {
      * Получаем рейтинг по id
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Mpa> getMpa(@PathVariable int id) {
+    public ResponseEntity<Mpa> getMpa(@PathVariable Long id) {
         log.info("Получен рейтинг с id '{}'", id);
         return ResponseEntity.ok().body(mpaService.getMpa(id));
     }

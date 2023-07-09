@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.annotation.NoSpaces;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import java.time.LocalDate;
 import java.util.HashSet;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Data
 @Builder
 public class User {
+    @NotNull
     private long id;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email(message = "Электронная почта должна содержать символ @")
@@ -28,7 +30,6 @@ public class User {
     private LocalDate birthday;
 
     private final Set<User> friends = new HashSet<>();
-
 
 
 }

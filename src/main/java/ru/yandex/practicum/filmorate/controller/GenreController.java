@@ -37,7 +37,7 @@ public class GenreController {
      * Получаем рейтинг по id
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Genre> getGenre(@PathVariable int id) {
+    public ResponseEntity<Genre> getGenre(@PathVariable Long id) {
         log.info("Получен рейтинг с id '{}'", id);
 
         return ResponseEntity.ok().body(genreService.getGenre(id));

@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.annotation.MinPast;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
@@ -20,7 +21,8 @@ import java.util.TreeSet;
 @NoArgsConstructor
 public class Film {
 
-    private Long id;
+    @NotNull
+    private long id;
     @NotBlank(message = "Название не может быть пустым")
     private String name;
     @Size(max = 200, message = "Максимальная длина описания — 200 символов")
@@ -31,15 +33,16 @@ public class Film {
     private Integer duration;
     private Mpa mpa;
     private Set<Genre> genres = new TreeSet<>(Comparator.comparingLong(Genre::getId));
-    private int likes;
+    private Integer likes;
 
 
-    public Film(String name, String description, LocalDate releaseDate, Integer duration, Mpa mpa) {
+    public Film(String name, String description, LocalDate releaseDate, Integer duration, Mpa mpa, Integer likes) {
         this.name = name;
         this.description = description;
         this.releaseDate = releaseDate;
         this.duration = duration;
         this.mpa = mpa;
+        this.likes = likes;
     }
 
     @JsonSetter

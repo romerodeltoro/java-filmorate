@@ -4,13 +4,15 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
+import javax.validation.constraints.NotNull;
 import java.util.Objects;
 
 @Getter
 @Setter
 @Builder
 public class Genre {
-    private int id;
+    @NotNull
+    private long id;
     private String name;
 
     @Override

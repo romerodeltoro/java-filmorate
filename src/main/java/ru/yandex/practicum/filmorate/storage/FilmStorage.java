@@ -2,7 +2,6 @@ package ru.yandex.practicum.filmorate.storage;
 
 import ru.yandex.practicum.filmorate.model.Film;
 
-
 import java.util.Collection;
 
 public interface FilmStorage {
@@ -14,7 +13,7 @@ public interface FilmStorage {
 
     Film updateFilm(Film film);
 
-    void addLikeToFilm(long filmId, long userId);
+    void addLikeToFilm(Long filmId, Long userId);
 
     void removeLike(Long filmId, Long userId);
 
