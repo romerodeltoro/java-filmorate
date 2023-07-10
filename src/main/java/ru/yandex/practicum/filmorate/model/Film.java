@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.annotation.MinPast;
 
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.Set;
@@ -21,8 +18,10 @@ import java.util.TreeSet;
 @NoArgsConstructor
 public class Film {
 
-    @NotNull
-    private long id;
+
+    @Null(groups = Marker.OnCreate.class)
+    @NotNull(groups = Marker.OnUpdate.class)
+    private Long id;
     @NotBlank(message = "Название не может быть пустым")
     private String name;
     @Size(max = 200, message = "Максимальная длина описания — 200 символов")

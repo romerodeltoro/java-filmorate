@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.yandex.practicum.filmorate.model.Marker;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
@@ -38,6 +39,7 @@ public class UserController {
      * Создание пользователя
      */
     @PostMapping
+    @Validated({Marker.OnCreate.class})
     public ResponseEntity<User> create(@Valid @RequestBody User user) {
         ResponseEntity.ok(userService.checkNameToBlank(user));
         userService.createUser(user);
@@ -49,6 +51,7 @@ public class UserController {
      * Обновляем пользователя
      */
     @PutMapping
+    @Validated(Marker.OnUpdate.class)
     public ResponseEntity<User> update(@Valid @RequestBody User user) {
 
         userService.updateUser(user);
@@ -71,6 +74,7 @@ public class UserController {
      * Добовляем в список друзей пользователя
      */
     @PutMapping("/{id}/friends/{friendId}")
+    @Validated(Marker.OnUpdate.class)
     public ResponseEntity<Void> addFriends(
             @PathVariable Long id,
             @PathVariable Long friendId) {
@@ -84,6 +88,7 @@ public class UserController {
      * Удаляем из друзей пользователя
      */
     @DeleteMapping("/{id}/friends/{friendId}")
+    @Validated(Marker.OnUpdate.class)
     public ResponseEntity<Void> removeFriends(
             @PathVariable Long id,
             @PathVariable Long friendId) {

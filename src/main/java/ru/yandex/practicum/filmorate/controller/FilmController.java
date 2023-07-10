@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Marker;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -37,6 +38,7 @@ public class FilmController {
      * Добавляем фильм в базу
      */
     @PostMapping
+    @Validated({Marker.OnCreate.class})
     public ResponseEntity<Film> create(@Valid @RequestBody Film film) {
         filmService.addFilm(film);
         log.info("Добавлен новый фильм: id - '{}', name - '{}'", film.getId(), film.getName());
@@ -48,6 +50,7 @@ public class FilmController {
      * Обновляем фильм
      */
     @PutMapping
+    @Validated(Marker.OnUpdate.class)
     public ResponseEntity<Film> update(@Valid @RequestBody Film film) {
         filmService.updateFilm(film);
         log.info("Фильм: '{}' - обновлен", film);
@@ -68,6 +71,7 @@ public class FilmController {
      * Юзер ставит фильму лайк
      */
     @PutMapping("/{id}/like/{userId}")
+    @Validated(Marker.OnUpdate.class)
     public ResponseEntity<Void> addLike(
             @PathVariable Long id,
             @PathVariable Long userId) {
@@ -81,6 +85,7 @@ public class FilmController {
      * Юзер удаляет лайк
      */
     @DeleteMapping("/{id}/like/{userId}")
+    @Validated(Marker.OnUpdate.class)
     public ResponseEntity<Void> removeLike(
             @PathVariable Long id,
             @PathVariable Long userId) {
