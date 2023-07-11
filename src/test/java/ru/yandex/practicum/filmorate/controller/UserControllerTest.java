@@ -1,11 +1,14 @@
 package ru.yandex.practicum.filmorate.controller;
 
-import org.junit.jupiter.api.BeforeEach;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.UserService;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
+import ru.yandex.practicum.filmorate.storage.impl.UserDBStorage;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
@@ -17,9 +20,16 @@ import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UserControllerTest {
-    private UserController userController;
+@SpringBootTest
+@AutoConfigureTestDatabase
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
+public class UserControllerTest {
+
+    private final UserDBStorage userStorage;
+
     private static Validator validator;
+
 
     static {
         ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
@@ -33,16 +43,12 @@ class UserControllerTest {
             .birthday(LocalDate.of(2002, 11, 16))
             .build();
 
-    @BeforeEach
-    void setUp() {
-        userController = new UserController(new UserService(new InMemoryUserStorage()));
-    }
-
     @Test
     @DisplayName("Получение списка юзеров")
     void findAll() {
-        userController.create(user);
-        final List<User> users = userController.getUserService().getUserStorage().getAllUsers();
+        final User createdUser = userStorage.addUser(user);
+
+        final List<User> users = userStorage.getAllUsers();
         int size = users.size();
 
         assertNotNull(users, "Юзеры не возвращаются.");
@@ -52,11 +58,11 @@ class UserControllerTest {
     @Test
     @DisplayName("Создание юзера")
     void create() {
-        final User createdUser = userController.create(user).getBody();
+        final User createdUser = userStorage.addUser(user);
         final long id = createdUser.getId();
 
         assertEquals(createdUser,
-                userController.getUserService().getUserStorage().getUser(id), "Пользователи не совпадают.");
+                userStorage.getUser(id), "Пользователи не совпадают.");
     }
 
     @Test
@@ -96,25 +102,24 @@ class UserControllerTest {
                 .login("login")
                 .birthday(LocalDate.of(2000, 1, 10))
                 .build();
-        userController.create(createdUser);
+        userStorage.addUser(createdUser);
         assertEquals(createdUser.getLogin(), createdUser.getName());
     }
 
     @Test
     @DisplayName("Получение юзера")
     void getUser() {
-        final User createdUser = userController.create(user).getBody();
+        final User createdUser = userStorage.addUser(user);
         final long id = createdUser.getId();
 
         assertEquals(createdUser,
-                userController.getUser(id).getBody(), "Пользователи не совпадают.");
+                userStorage.getUser(id), "Пользователи не совпадают.");
     }
 
     @Test
     @DisplayName("Обновление юзера")
     void update() {
-        final long id = userController.create(user).getBody().getId();
-
+        final long id = userStorage.addUser(user).getId();
         final User updatedUser = User.builder()
                 .id(id)
                 .email("update-practicum@yandex.ru")
@@ -123,7 +128,7 @@ class UserControllerTest {
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
 
-        assertEquals(updatedUser, userController.update(updatedUser).getBody(), "Юзеры разные");
+        assertEquals(updatedUser, userStorage.updateUser(updatedUser), "Юзеры разные");
     }
 
     @Test
@@ -135,13 +140,11 @@ class UserControllerTest {
                 .name("Friend")
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
-        long id = userController.create(user).getBody().getId();
-        long friendId = userController.create(friend).getBody().getId();
+        long id = userStorage.addUser(user).getId();
+        long friendId = userStorage.addUser(friend).getId();
 
-        userController.addFriends(id, friendId);
-        assertNotNull(userController.getUserService().getUserStorage().getUser(id).getFriends());
-        assertNotNull(userController.getUserService().getUserStorage().getUser(friendId).getFriends());
-
+        userStorage.addUserFriend(id, friendId);
+        assertNotNull(userStorage.getUserFriends(id));
     }
 
     @Test
@@ -153,14 +156,13 @@ class UserControllerTest {
                 .name("Friend")
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
-        long id = userController.create(user).getBody().getId();
-        long friendId = userController.create(friend).getBody().getId();
+        long id = userStorage.addUser(user).getId();
+        long friendId = userStorage.addUser(friend).getId();
 
-        userController.addFriends(id, friendId);
-        userController.removeFriends(id, friendId);
+        userStorage.addUserFriend(id, friendId);
+        userStorage.removeUserFriend(id, friendId);
 
-        assertTrue(userController.getUserService().getUserStorage().getUser(id).getFriends().isEmpty());
-        assertTrue(userController.getUserService().getUserStorage().getUser(friendId).getFriends().isEmpty());
+        assertTrue(userStorage.getUserFriends(id).isEmpty());
     }
 
     @Test
@@ -172,12 +174,12 @@ class UserControllerTest {
                 .name("Friend")
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
-        long id = userController.create(user).getBody().getId();
-        long friendId = userController.create(friend).getBody().getId();
+        long id = userStorage.addUser(user).getId();
+        long friendId = userStorage.addUser(friend).getId();
 
-        userController.addFriends(id, friendId);
+        userStorage.addUserFriend(id, friendId);
 
-        assertEquals(1, userController.getUserFriends(id).getBody().size());
+        assertEquals(1, userStorage.getUserFriends(id).size());
 
     }
 
@@ -197,14 +199,14 @@ class UserControllerTest {
                 .birthday(LocalDate.of(2002, 11, 16))
                 .build();
 
-        long id = userController.create(user).getBody().getId();
-        long user2Id = userController.create(user2).getBody().getId();
-        long user3Id = userController.create(user3).getBody().getId();
+        long id = userStorage.addUser(user).getId();
+        long user2Id = userStorage.addUser(user2).getId();
+        long user3Id = userStorage.addUser(user3).getId();
 
-        userController.addFriends(id, user2Id);
-        userController.addFriends(id, user3Id);
+        userStorage.addUserFriend(id, user2Id);
+        userStorage.addUserFriend(id, user3Id);
 
-        assertTrue(userController.getCommonFriends(user2Id, user3Id).getBody()
+        assertTrue(userStorage.getCommonFriends(user2Id, user3Id)
                 .stream().allMatch(u -> u.getId() == id));
 
     }

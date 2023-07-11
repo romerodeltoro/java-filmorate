@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.annotation.NoSpaces;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Past;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -16,7 +14,10 @@ import java.util.Set;
 @Data
 @Builder
 public class User {
-    private long id;
+
+    @Null(groups = Marker.OnCreate.class)
+    @NotNull(groups = Marker.OnUpdate.class)
+    private Long id;
     @NotBlank(message = "Электронная почта не может быть пустой")
     @Email(message = "Электронная почта должна содержать символ @")
     private String email;
@@ -26,6 +27,8 @@ public class User {
     private String name;
     @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
-    private final Set<Long> friends = new HashSet<>();
+
+    private final Set<User> friends = new HashSet<>();
+
 
 }
